@@ -16,11 +16,12 @@ const getProducts = function(done) {
 const findProductByCode = function(productCode, done) {
 	async.waterfall([
 		productService.findProductByCode.bind(null, productCode),
-		vendorCtrl.findVendorByCode
+		productService.productByVendorCode
 	], (err, result) => {
-		// @TODO
+		done(err, result);
 	});
 }
+
 
 module.exports = {
   addNewProduct,

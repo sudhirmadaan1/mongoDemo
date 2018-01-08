@@ -49,6 +49,23 @@ router.get('/', function(req, res) {
   }
 });
 
+router.get('/:productCode', (req, res) => {
+  try {
+    productCtrl.findProductByCode(req.params.productCode, (err, results) => {
+      if(err) {
+        console.error('Error in GET of products, ERROR::', err);
+        res.status(400).send({error: 'Something went wrong, please try later..!'});
+        return;
+      }
+      res.send(results);
+    });
+  } catch (err) {
+    console.error('Unexpected error in submitting review of product, ERROR::', err);
+    res.status(500).send({ error: 'Unexpected internal error, please try later..!' });
+    return;
+  }
+});
+
 router.post('/:productCode/reviews', function(req, res) {
   try {
     let reviewObj = req.body;

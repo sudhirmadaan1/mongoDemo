@@ -2,9 +2,25 @@ const mongoose = require('mongoose');
 
 const SALE_STATUS = ['On-Stand', 'Not-Available', 'Pre-Order', 'Discontinued'];
 
+let productSchema = new mongoose.Schema({
+  products:[{
+    name: {type:String, required:true},
+    productCode: {type: String, required: true},
+    vendorCode: {type: String, required: true},
+    price: {type: Number, required: true}
+  }]
+});
+
+let vendorSchema = new mongoose.Schema({
+  name: {type:String, required:true},
+  vendorCode: {type: String, required: true},
+  contactEmail: {type: String, required: true},
+  sellerRank: {type: Number, required: true}
+});
+
 let schema = new mongoose.Schema({
   name: { type: String, required: true },
-  code: { type: String, unique: true, required: true },
+  productcode: { type: String, unique: true, required: true },
   // REFERENCE
   vendor: { type: String, require: true },
   sku: { type: String, required: true },
@@ -72,8 +88,46 @@ schema.index({
   unique: true
 });
 
+
+
 //Creating the model, model is the runtime object instance of the schema
-module.exports = mongoose.model("products", schema);
+let schemaProducts = mongoose.model("products", schema);
+let productsSchema = mongoose.model('productData', productSchema);
+let vendorsSchema = mongoose.model('vendorData', vendorSchema);
+
+// let productsModelSchema = new productsSchema ({
+//   products:[
+//     {
+//       "name":"Lenovo Smart Scale",
+//       "productCode":"HS10",
+//       "vendorCode":"appario_101",
+//       "price":3999
+//     },
+//     {
+//       "name":"Lenovo PHAB",
+//       "productCode":"PH220",
+//       "vendorCode":"Micro_200",
+//       "price":10000
+//     }
+//   ]
+// });
+
+// productsModelSchema.save(function (err) {if (err) console.log ('Error on save!')});
+
+// let vendorModelSchema = new vendorsSchema ({
+//   "name":"Lenovo Smart Scale",
+//   "vendorCode": "appario_101",
+//   "contactEmail": "sudhir.madaan@gmail.com",
+//   "sellerRank": 1
+// });
+
+// vendorModelSchema.save(function (err) {if (err) console.log ('Error on save!')});
+
+module.exports = {
+  schemaProducts,
+  productsSchema,
+  vendorsSchema
+}
 
 
 

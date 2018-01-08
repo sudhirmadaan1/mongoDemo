@@ -1,4 +1,5 @@
-const ProductModel = require('./products.entity');
+const ProductModel = require('./products.entity').schemaProducts;
+const ProductData = require('./products.entity');
 
 const addNewProduct = function(newProduct, done) {
   let product = new ProductModel();
@@ -41,13 +42,45 @@ const getProducts = function(done) {
         done(err);
         return;
       }
+      console.log(colln);
       done(null, colln);
     });
 }
 
 const findProductByCode = function(productCode, done) {
-  // @TODO
+  let getProduct = {};
+  ProductData.productsSchema.find({}).exec((err, data) => {
+    let finalData = data[0]['products']
+    for(let i=0; i<finalData.length; i++) {
+      if(finalData[i]['productCode'] === productCode) {
+        getProduct = finalData[i];
+        break;
+      } 
+    }  
+    done(err, getProduct);
+  });
 }
+
+const productByVendorCode = (data, done) => {
+  let getVendorData = {};
+  let finalData = {};
+  ProductData.vendorsSchema.find().exec((err, results) => {
+    if (err) {
+      console.error("Error in submitting review, ERROR::", err);
+      done(err)
+      return;
+    }
+    for(let i=0; i<results.length; i++) {
+      if(results[i]['vendorCode'] === data.vendorCode) {
+        finalData = JSON.parse(JSON.stringify(data));
+        finalData.vendor = results[i];
+        delete finalData.vendorCode;
+        break;
+      }
+    }
+    done(null, finalData);
+  });
+};
 
 const submitNewReview = function(productCode, reviewObj, done) {
   let query = { code: productCode };
@@ -80,5 +113,6 @@ module.exports = {
   addNewProduct,
   getProducts,
   submitNewReview,
-  findProductByCode
+  findProductByCode,
+  productByVendorCode
 }
